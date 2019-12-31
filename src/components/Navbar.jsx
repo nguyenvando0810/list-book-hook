@@ -6,7 +6,7 @@ function Navbar() {
   return (
     <div className="navbar">
       <h1>Reading List Book</h1>
-      <h3>Total books: {books.length}</h3>
+      {books.length > 0 ? <h3>Total books: {books.length}</h3> : <h3> No book (T__T) </h3>}
     </div>
   )
 }

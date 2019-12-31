@@ -64,25 +64,34 @@ body {
   text-align: center;
 }
 
-form {
+.ant-form {
   padding: 20px;
+}
+
+.form-control {
+  margin-bottom: 15px;
 }
 
 input[type='text'] {
   width: 100%;
-  padding: 10px;
+  padding: 15px 10px;
   box-sizing: border-box;
-  margin: 6px 0;
   background: #3c1f3c;
   color: #fff;
   border: 0;
 }
 
-input[type='button'] {
-  margin: 10px auto;
-  background: #eee;
-  border: 0;
-  padding: 10px 20px;
-  border-radius: 4px;
-display: block;
+.text-center {
+  text-align: center;
+}
+
+.ant-btn-primary {
+  margin: 10px 0;
+}
+
+.error_message {
+  width: 100%;
+  margin-top: .25rem;
+  font-size: 80%;
+  color: #dc3545;
 }

@@ -1,14 +1,15 @@
 import React, { createContext, useReducer } from 'react'
 import { BookReducer } from '../reducer/BooksReducer'
+import { ModalReducer } from '../reducer/ModalReducer'
 
-const intinialBooks = [{ title: 'True', author: 'Do Do', id: 1 }]
 export const BooksContext = createContext()
 
 function BooksContextProvider(props) {
-  const [books, dispatch] = useReducer(BookReducer, intinialBooks)
+  const [books, dispatch] = useReducer(BookReducer, [{ title: 'True', author: 'Do Do', id: 1 }])
+  const [visible, dispatchVisible] = useReducer(ModalReducer, { visible: false })
 
   return (
-    <BooksContext.Provider value={{ books, dispatch }}>
+    <BooksContext.Provider value={{ books, dispatch, visible, dispatchVisible }}>
       {props.children}
     </BooksContext.Provider>
   )

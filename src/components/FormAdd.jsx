@@ -1,18 +1,13 @@
 import React, { useState, useContext } from 'react'
 import { BooksContext } from '../context/BooksContext'
+import { Form, Input, Button } from 'antd';
 
 function FormAdd() {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
+  const [errTitle, setErrTitle] = useState(false)
+  const [errAuthor, setErrAuthor] = useState(false)
   const { dispatch } = useContext(BooksContext)
-
-  function handleChangeTitle(e) {
-    setTitle(e.target.value)
-  }
-
-  function handleChangeAuthor(e) {
-    setAuthor(e.target.value)
-  }
 
   function handleSubmitForm() {
     dispatch({ type: 'ADD_BOOK', book: { title, author } })
@@ -20,23 +15,42 @@ function FormAdd() {
     setAuthor('')
   }
 
-  return (
-    <form>
-      <input
-        type="text"
-        placeholder="Book title"
-        value={title}
-        onChange={handleChangeTitle}
-      />
+  const handleBlueTitle = (e) => {
+    setErrTitle(!e.target.value)
+  }
 
-      <input
-        type="text"
-        placeholder="Author name"
-        value={author}
-        onChange={handleChangeAuthor}
-      />
-      <input type="button" value="Add book" onClick={handleSubmitForm} />
-    </form>
+  const handleBlueAuthor = (e) => {
+    setErrAuthor(!e.target.value)
+  }
+
+  return (
+    <Form>
+      <div className="form-control">
+        <Input
+          type="text"
+          placeholder="Book title"
+          value={title}
+          onChange={(e) => { setTitle(e.target.value) }}
+          onBlur={handleBlueTitle}
+        />
+        {errTitle && <div className="error_message">Title cannot be empty</div>}
+      </div>
+
+      <div className="form-control">
+        <Input
+          type="text"
+          placeholder="Author name"
+          value={author}
+          onChange={(e) => { setAuthor(e.target.value) }}
+          onBlur={handleBlueAuthor}
+        />
+        {errAuthor && <div className="error_message">Author cannot be empty</div>}
+      </div>
+
+      <div className="text-center">
+        <Button type="primary" onClick={handleSubmitForm} disabled={!title.trim() || !author.trim()}>Add book</Button>
+      </div>
+    </Form>
   )
 }
 

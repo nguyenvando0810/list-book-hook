@@ -2,10 +2,10 @@ import React, { useContext } from 'react'
 import { BooksContext } from '../context/BooksContext'
 
 function ListBook({ book }) {
-  const { dispatch } = useContext(BooksContext)
+  const { dispatchVisible } = useContext(BooksContext)
 
   return (
-    <li onClick={() => dispatch({ type: 'DELETE_BOOK', id: book.id })}>
+    <li onClick={() => dispatchVisible({ type: 'OPEN_MODAL', book: book })}>
       <div className="title">
         {book.title} / {book.author}
       </div>

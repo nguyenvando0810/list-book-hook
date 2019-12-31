@@ -1,9 +1,11 @@
+import uuid from 'uuid'
+
 export function BookReducer(state, action) {
   switch (action.type) {
     case 'ADD_BOOK':
       return [
         ...state,
-        { title: action.book.title, author: action.book.author, id: Date.now() }
+        { title: action.book.title, author: action.book.author, id: uuid.v4() }
       ]
 
     case 'DELETE_BOOK':
