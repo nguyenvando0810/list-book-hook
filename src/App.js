@@ -6,61 +6,46 @@ import Navbar from './components/Navbar'
 import ListBook from './components/ListBook'
 import Add from './components/Add'
 import ModalConfirm from './components/ModalConfirm'
-import { Input, Button, Icon } from 'antd';
-
-import { gql } from "apollo-boost"
+import { Input, Button, Icon } from 'antd'
 import { useQuery, useMutation } from '@apollo/react-hooks'
-
-const TODOS_QUERY = gql`
-  query {
-    todos {
-      type
-      id
-    }
-  }
-`;
-
-const ADD_TODO = gql`
-  mutation addTodo($type: String!) {
-    addTodo(type: $type) {
-      type
-      id
-    }
-  }
-`;
-
-const DELETE_TODO = gql`
-  mutation deleteTodo($id: String!) {
-    deleteTodo(id: $id) {
-      type
-      id
-    }
-  }
-`;
-
+import {TODOS_QUERY, ADD_TODO, DELETE_TODO, UPDATE_TODO} from './graphql'
 
 function App() {
   const { data } = useQuery(TODOS_QUERY)
-  const [type, setType] = useState('')
-  const [deleteTodo] = useMutation(DELETE_TODO)
-  const [addTodo] = useMutation(ADD_TODO,
-    {
-      update(cache, { data: { addTodo } }) {
-        const { todos } = cache.readQuery({ query: TODOS_QUERY })
-        cache.writeQuery({
-          query: TODOS_QUERY,
-          data: { todos: todos.concat([addTodo]) }
-        })
-      }
-    })
+  const [title, setTitle] = useState('')
+  const [deleteTodo] = useMutation(DELETE_TODO, {
+    update(cache, { data: { deleteTodo } }) {
+      const { todoes } = cache.readQuery({ query: TODOS_QUERY })
+      cache.writeQuery({
+        query: TODOS_QUERY,
+        data: { todoes: todoes.filter(todo => todo.id !== deleteTodo.id) }
+      })
+    }
+  })
+
+  const [createTodo] = useMutation(ADD_TODO, {
+    update(cache, { data: { createTodo } }) {
+      const { todoes } = cache.readQuery({ query: TODOS_QUERY })
+      cache.writeQuery({
+        query: TODOS_QUERY,
+        data: { todoes: todoes.concat([createTodo]) }
+      })
+    }
+  })
+
+  const [updateTodo] = useMutation(UPDATE_TODO)
 
   const handleAddClick = () => {
-    addTodo({ variables: { type } })
-    setType('')
+    createTodo({ variables: { title } })
+    setTitle('')
   }
 
-  const handleDeleteClick = (id) => {
+  const handleDeleteClick = id => {
     deleteTodo({ variables: { id } })
+  }
+
+  const handleEditClick = id => {
+    updateTodo({ variables: { id, title: 'dodo', completed: true } })
   }
 
   return (
@@ -76,12 +61,24 @@ function App() {
         <ModalConfirm />
       </BooksContextProvider>
 
-      <Input type="text" placeholder="type" value={type} onChange={(e) => setType(e.target.value)} />
-      <Button type="primary" onClick={handleAddClick} disabled={!type.trim()}> Ass Todo</Button>
-      {data && data.todos && data.todos.map((todo, index) => <li key={index}>{todo.type} / {todo.id} &nbsp; &nbsp;
-        <Icon type="delete" onClick={() => handleDeleteClick(todo.id)} />
-      </li>)}
-    </div >
+      <Input
+        type="text"
+        placeholder="Type"
+        value={title}
+        onChange={e => setTitle(e.target.value)}
+      />
+      <Button type="primary" onClick={handleAddClick} disabled={!title.trim()}>Ass Todo</Button>
+      {data &&
+        data.todoes &&
+        data.todoes.map((todo, index) => (
+          <li key={index}>
+            {todo.title} / {todo.id} &nbsp; &nbsp;
+            <Icon type="delete" onClick={() => handleDeleteClick(todo.id)} />
+            &nbsp; &nbsp;
+            <Icon type="edit" onClick={() => handleEditClick(todo.id)} />
+          </li>
+        ))}
+    </div>
   )
 }
 

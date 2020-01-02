@@ -6,7 +6,7 @@ import * as serviceWorker from './serviceWorker';
 import { ApolloProvider } from '@apollo/react-hooks';
 import ApolloClient from 'apollo-boost';
 
-const client = new ApolloClient({ uri: 'https://plp0mopxq.sse.codesandbox.io/' });
+const client = new ApolloClient({ uri: 'https://us1.prisma.sh/public-ceruleanforger-651/todo-in-react-apollo/dev' });
 
 ReactDOM.render(
   <ApolloProvider client={client}>
