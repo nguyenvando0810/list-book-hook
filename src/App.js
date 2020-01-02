@@ -1,27 +1,67 @@
-import React from 'react'
+import React, { useState } from 'react'
 import logo from './logo.svg'
 import './App.css'
 import BooksContextProvider from './context/BooksContext'
 import Navbar from './components/Navbar'
 import ListBook from './components/ListBook'
-import FormAdd from './components/FormAdd'
+import Add from './components/Add'
 import ModalConfirm from './components/ModalConfirm'
+import { Input, Button, Icon } from 'antd';
 
 import { gql } from "apollo-boost"
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 
-const AUTHORS_QUERY = gql`
+const TODOS_QUERY = gql`
   query {
-    authors {
+    todos {
+      type
       id
-      name
-      status
     }
   }
 `;
 
+const ADD_TODO = gql`
+  mutation addTodo($type: String!) {
+    addTodo(type: $type) {
+      type
+      id
+    }
+  }
+`;
+
+const DELETE_TODO = gql`
+  mutation deleteTodo($id: String!) {
+    deleteTodo(id: $id) {
+      type
+      id
+    }
+  }
+`;
+
+
 function App() {
-  const { data } = useQuery(AUTHORS_QUERY);
+  const { data } = useQuery(TODOS_QUERY)
+  const [type, setType] = useState('')
+  const [deleteTodo] = useMutation(DELETE_TODO)
+  const [addTodo] = useMutation(ADD_TODO,
+    {
+      update(cache, { data: { addTodo } }) {
+        const { todos } = cache.readQuery({ query: TODOS_QUERY })
+        cache.writeQuery({
+          query: TODOS_QUERY,
+          data: { todos: todos.concat([addTodo]) }
+        })
+      }
+    })
+
+  const handleAddClick = () => {
+    addTodo({ variables: { type } })
+    setType('')
+  }
+
+  const handleDeleteClick = (id) => {
+    deleteTodo({ variables: { id } })
+  }
 
   return (
     <div className="App">
@@ -32,12 +72,16 @@ function App() {
       <BooksContextProvider>
         <Navbar />
         <ListBook />
-        <FormAdd />
+        <Add />
         <ModalConfirm />
       </BooksContextProvider>
 
-      {data && data.authors && data.authors.map((author, index) => <li key={index}>{author.name} / {author.id} / {author.status}</li>)}
-    </div>
+      <Input type="text" placeholder="type" value={type} onChange={(e) => setType(e.target.value)} />
+      <Button type="primary" onClick={handleAddClick} disabled={!type.trim()}> Ass Todo</Button>
+      {data && data.todos && data.todos.map((todo, index) => <li key={index}>{todo.type} / {todo.id} &nbsp; &nbsp;
+        <Icon type="delete" onClick={() => handleDeleteClick(todo.id)} />
+      </li>)}
+    </div >
   )
 }
 

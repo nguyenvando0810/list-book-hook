@@ -69,16 +69,16 @@ body {
 }
 
 .form-control {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 input[type='text'] {
   width: 100%;
-  padding: 15px 10px;
-  box-sizing: border-box;
-  background: #3c1f3c;
-  color: #fff;
-  border: 0;
+  padding: 18px 10px;
+}
+
+.ant-modal-body .ant-form {
+  padding: 0;
 }
 
 .text-center {
@@ -94,4 +94,8 @@ input[type='text'] {
   margin-top: .25rem;
   font-size: 80%;
   color: #dc3545;
+}
+
+.ant-modal-footer {
+  padding: 10px 24px;
 }
